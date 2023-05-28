@@ -2,6 +2,7 @@ import { useContext } from 'react';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar  from 'react-bootstrap/Navbar';
+import { Link } from 'react-router-dom';
 import { AuthContext } from '../../providers/AuthProvider';
 
 function NavigationBar() {
@@ -11,21 +12,21 @@ function NavigationBar() {
     <>
         <Navbar bg="light" expand="lg">
             <Container>
-                <Navbar.Brand href="/">BOOKING</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/">BOOKING</Navbar.Brand>
                 <Nav className="justify-content-end">
                     <Nav.Link href="#home">Offers</Nav.Link>
                     {
                         !!user 
                         ? 
                         <>
-                            <Nav.Link href="#features">Reservations</Nav.Link>
-                            <Nav.Link href="#pricing">Profile</Nav.Link>
-                            <Nav.Link href="#categories">Categories</Nav.Link>
-                            <Nav.Link href="/logout">Logout</Nav.Link>
+                            <Nav.Link as={Link} to="#features">Reservations</Nav.Link>
+                            <Nav.Link as={Link} to="#pricing">Profile</Nav.Link>
+                            <Nav.Link as={Link} to="/countries">Countries</Nav.Link>
+                            <Nav.Link as={Link} to="/logout">Logout</Nav.Link>
                         </>
                         :
                         <>
-                            <Nav.Link href="/login">Login</Nav.Link>
+                            <Nav.Link as={Link} to="/login">Login</Nav.Link>
                         </> 
                     }
                     

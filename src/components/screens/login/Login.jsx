@@ -16,13 +16,13 @@ function Login() {
         e.preventDefault()
         setError('')
         AuthService.authenticate({username, password})
-        .then(function (response) {
-            setUser(response.data)
-            history('/home')
-        })
-        .catch(function (errorMessage) {
-            setError(errorMessage)
-        })
+            .then(function (response) {
+                setUser(response.data)
+                history('/home')
+            })
+            .catch(function (errorMessage) {
+                setError(errorMessage)
+            })
     }
 
     return (
