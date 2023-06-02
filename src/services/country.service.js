@@ -27,19 +27,25 @@ export const CountryService = {
         return response
     },
 
-    async update(id, data) {
-        const updateUrl = url + "/" + id
+    async update(id, data, token) {
+        const updateUrl = url + id
         const response = await axios.put(updateUrl, data, {
             headers : {
                 "Content-type": "application/json",
-                "Access-Control-Allow-Origin": "*"
+                "Access-Control-Allow-Origin": "*",
+                "Authorization" : token
             }
         })
         return response
     },
 
-    async delete(id) {
-        const deleteUrl = url + "/" + id
-        const response = await axios.delete(deleteUrl)
+    async delete(id, token) {
+        const deleteUrl = url + id
+        const response = await axios.delete(deleteUrl, {
+            headers : {
+                "Authorization" : token
+            }
+        })
+        return response
     }
 }
