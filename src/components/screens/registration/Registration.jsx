@@ -121,7 +121,7 @@ function Registration() {
                                 <Form.Label className="d-flex justify-content-center">Is male? </Form.Label>
                                 <Form.Check className="mx-2" type="switch"
                                 onChange={e => setData(prev => ({
-                                    ...prev, isMale : e.target.value
+                                    ...prev, isMale : e.target.checked
                                 }))}
                                 value={data.isMale}/>
                             </Form.Group>
