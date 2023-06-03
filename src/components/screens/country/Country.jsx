@@ -34,7 +34,6 @@ function Country() {
         await CountryService.create({name}, user.token)
             .then(function(response) {
                 const oldCountries = countries
-                oldCountries.push(response.data)
                 setCountries([
                     ...oldCountries,
                     {id: response.data.id, name: response.data.name}
@@ -139,7 +138,6 @@ function Country() {
                         {countries.length ? (
                             <Table striped hover>
                                 <tbody>
-
                                     {countries.map(country => (
                                         <tr key={country.id}>
                                             <td>{country.name}</td>
@@ -183,7 +181,6 @@ function Country() {
                                     There are no countries
                                 </Alert>
                             </div>
-                            
                         )}
                     </div>
             </Container>

@@ -3,6 +3,7 @@ import Home from "../screens/home/Home"
 import Login from "../screens/login/Login"
 import Registration from "../screens/registration/Registration"
 import Country from "../screens/country/Country"
+import City from "../screens/city/City"
 
 const Router = () => {
     return <BrowserRouter>
