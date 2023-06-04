@@ -7,6 +7,7 @@ import City from "../screens/city/City"
 import Profile from "../screens/profile/Profile"
 import Category from "../screens/category/Category"
 import Password from "../screens/profile/Password"
+import { Navigate } from "react-router-dom"
 
 const Router = () => {
     return <BrowserRouter>
@@ -20,7 +21,7 @@ const Router = () => {
         <Route element={<Profile/>} path="/profile"/>
         <Route element={<Password/>} path="/profile/password"/>
         <Route element={<Category/>} path="/categories"/>
-        <Route element={<Home/>} path="*"/>
+        <Route element={<Navigate to="/" replace/>} path="*"/>
     </Routes>
     </BrowserRouter>
 }
