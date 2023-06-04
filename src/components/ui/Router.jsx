@@ -5,6 +5,7 @@ import Registration from "../screens/registration/Registration"
 import Country from "../screens/country/Country"
 import City from "../screens/city/City"
 import Profile from "../screens/profile/Profile"
+import Category from "../screens/category/Category"
 
 const Router = () => {
     return <BrowserRouter>
@@ -16,6 +17,7 @@ const Router = () => {
         <Route element={<Country/>} path="/countries"/>
         <Route element={<City/>} path="/cities"/>
         <Route element={<Profile/>} path="/profile"/>
+        <Route element={<Category/>} path="/categories"/>
         <Route element={<Home/>} path="*"/>
     </Routes>
     </BrowserRouter>

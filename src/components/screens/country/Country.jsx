@@ -7,6 +7,7 @@ import { Button, Container, Form, FormGroup, Alert, Table, Modal} from "react-bo
 function Country() {
     const [countries, setCountries] = useState([])
     const [error, setError] = useState('')
+    const [updateError, setUpdateError] = useState('')
     const [name, setName] = useState('')
     const {user} = useContext(AuthContext)
     const [showModal, setShowModal] = useState(false)
@@ -58,7 +59,6 @@ function Country() {
     }
 
     const updateCountry = async () => {
-        setError('')
         await CountryService.update(countryId, {name}, user.token)
             .then(function(response) {
                 setCountries([
@@ -68,8 +68,7 @@ function Country() {
                 handleCloseModal()
             })
             .catch(function(errorMessage) {
-                handleCloseModal()
-                setError(errorMessage)
+                setUpdateError(errorMessage)
             })
     }
 
@@ -77,12 +76,14 @@ function Country() {
         setName('')
         setShowModal(false)
         setCountryId('')
+        setUpdateError('')
     }
 
     const handleOpenModal = (country) => {
         setName(country.name)
         setCountryId(country.id)
         setShowModal(true)
+        setError('')
     }
 
     return (
@@ -93,6 +94,9 @@ function Country() {
                     <Modal.Title>Update country</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    {updateError && <Alert variant='danger'>
+                        {updateError.response.data.message}
+                    </Alert>}
                     <Form>
                         <FormGroup controlId="name">
                             <div className="d-flex align-items-center justify-content-center">
@@ -138,10 +142,14 @@ function Country() {
                         {countries.length ? (
                             <Table striped hover>
                                 <tbody>
+                                    <tr>
+                                        <th>Country name</th>
+                                        <th>Update/Delete</th>
+                                    </tr>
                                     {countries.map(country => (
                                         <tr key={country.id}>
                                             <td>{country.name}</td>
-                                            <td className="d-flex justify-content-end">
+                                            <td className="d-flex justify-content-start">
                                             <div>
                                                     <svg xmlns="http://www.w3.org/2000/svg"
                                                          width="16"

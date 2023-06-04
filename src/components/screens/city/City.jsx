@@ -8,6 +8,7 @@ import { CountryService } from "../../../services/country.service"
 function City() {
     const [cities, setCities] = useState([])
     const [error, setError] = useState('')
+    const [updateError, setUpdateError] = useState('')
     const {user} = useContext(AuthContext)
     const [showModal, setShowModal] = useState(false)
     const [city, setCity] = useState({country : '', name: '', countryId : '', id : ''})
@@ -54,6 +55,7 @@ function City() {
 
     const handleCloseModal = () => {
         setShowModal(false)
+        setUpdateError('')
         setCity({country : '', name: '', countryId : '', id : ''})
         if (countries.length > 0) {
             setCity(prev => ({
@@ -101,16 +103,16 @@ function City() {
 
     const updateCity = async (e) => {
         e.preventDefault()
-        handleCloseModal()
         setError('')
         await CityService.update(city.id, city, user.token)
             .then(function(response) {
                 setCities([
                     ...cities.filter(country => country.id !== response.data.id), response.data
                 ])
+                handleCloseModal()
             })
             .catch(function(errorMessage) {
-                setError(errorMessage)
+                setUpdateError(errorMessage)
             }) 
     }
 
@@ -122,6 +124,9 @@ function City() {
                     <Modal.Title>Update city</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
+                    {updateError && <Alert variant='danger'>
+                        {updateError.response.data.message}
+                    </Alert>}
                     <Form>
                         <FormGroup controlId="name">
                             <div className="d-flex align-items-center justify-content-center">
