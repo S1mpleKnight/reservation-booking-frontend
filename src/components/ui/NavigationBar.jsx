@@ -6,7 +6,7 @@ import { Link } from 'react-router-dom';
 import { AuthContext } from '../../providers/AuthProvider';
 
 function NavigationBar() {
-    const {user} = useContext(AuthContext)
+    const {user, setUser} = useContext(AuthContext)
 
     return (
     <>
@@ -24,7 +24,7 @@ function NavigationBar() {
                             <Nav.Link as={Link} to="/cities">Cities</Nav.Link>
                             <Nav.Link as={Link} to="/categories">Categories</Nav.Link>
                             <Nav.Link as={Link} to="/profile">Profile</Nav.Link>
-                            <Nav.Link as={Link} to="/logout">Logout</Nav.Link>
+                            <Nav.Link as={Link} to="/logout" onClick={() => setUser('')}>Logout</Nav.Link>
                         </>
                         :
                         <>

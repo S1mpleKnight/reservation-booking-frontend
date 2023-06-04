@@ -3,6 +3,7 @@ import { AuthContext } from "../../../providers/AuthProvider"
 import { AuthService } from "../../../services/auth.service"
 import NavigationBar from "../../ui/NavigationBar"
 import { Container, Alert, Row, Col, FormControl, Form, Button, Modal } from "react-bootstrap"
+import { Link } from "react-router-dom"
 
 function Profile() {
     const {user} = useContext(AuthContext)
@@ -191,6 +192,11 @@ function Profile() {
                             <Col className="d-flex justify-content-center">
                                 <Button onClick={(e) => handleOpenModal(e)}>
                                     Update
+                                </Button>
+                            </Col>
+                            <Col className="d-flex justify-content-center">
+                                <Button as={Link} to="/profile/password">
+                                    Change password
                                 </Button>
                             </Col>
                         </Row>
