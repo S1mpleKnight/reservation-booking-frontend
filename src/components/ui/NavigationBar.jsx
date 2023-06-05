@@ -20,6 +20,7 @@ function NavigationBar() {
                         ? 
                         <>
                             <Nav.Link as={Link} to="#features">Reservations</Nav.Link>
+                            <Nav.Link as={Link} to="/establishments">Establishments</Nav.Link>
                             <Nav.Link as={Link} to="/countries">Countries</Nav.Link>
                             <Nav.Link as={Link} to="/cities">Cities</Nav.Link>
                             <Nav.Link as={Link} to="/categories">Categories</Nav.Link>

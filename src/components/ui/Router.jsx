@@ -7,6 +7,7 @@ import City from "../screens/city/City"
 import Profile from "../screens/profile/Profile"
 import Category from "../screens/category/Category"
 import Password from "../screens/profile/Password"
+import Establishment from "../screens/establishment/Establishment"
 import { Navigate } from "react-router-dom"
 
 const Router = () => {
@@ -21,6 +22,7 @@ const Router = () => {
         <Route element={<Profile/>} path="/profile"/>
         <Route element={<Password/>} path="/profile/password"/>
         <Route element={<Category/>} path="/categories"/>
+        <Route element={<Establishment/>} path="/establishments"/>
         <Route element={<Navigate to="/" replace/>} path="*"/>
     </Routes>
     </BrowserRouter>
