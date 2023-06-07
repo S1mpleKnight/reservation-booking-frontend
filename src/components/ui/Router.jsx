@@ -8,6 +8,7 @@ import Profile from "../screens/profile/Profile"
 import Category from "../screens/category/Category"
 import Password from "../screens/profile/Password"
 import Establishment from "../screens/establishment/Establishment"
+import Event from "../screens/event/Event"
 import { Navigate } from "react-router-dom"
 
 const Router = () => {
@@ -23,6 +24,7 @@ const Router = () => {
         <Route element={<Password/>} path="/profile/password"/>
         <Route element={<Category/>} path="/categories"/>
         <Route element={<Establishment/>} path="/establishments"/>
+        <Route element={<Event/>} path="/events"/>
         <Route element={<Navigate to="/" replace/>} path="*"/>
     </Routes>
     </BrowserRouter>

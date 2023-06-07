@@ -19,7 +19,7 @@ function NavigationBar() {
                         !!user 
                         ? 
                         <>
-                            <Nav.Link as={Link} to="#features">Reservations</Nav.Link>
+                            <Nav.Link as={Link} to="/events">Events</Nav.Link>
                             <Nav.Link as={Link} to="/establishments">Establishments</Nav.Link>
                             <Nav.Link as={Link} to="/countries">Countries</Nav.Link>
                             <Nav.Link as={Link} to="/cities">Cities</Nav.Link>
