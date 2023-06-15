@@ -10,6 +10,7 @@ import Password from "../screens/profile/Password"
 import Establishment from "../screens/establishment/Establishment"
 import Event from "../screens/event/Event"
 import { Navigate } from "react-router-dom"
+import Offer from "../screens/offer/Offer"
 
 const Router = () => {
     return <BrowserRouter>
@@ -25,6 +26,7 @@ const Router = () => {
         <Route element={<Category/>} path="/categories"/>
         <Route element={<Establishment/>} path="/establishments"/>
         <Route element={<Event/>} path="/events"/>
+        <Route element={<Offer/>} path="/offers"/>
         <Route element={<Navigate to="/" replace/>} path="*"/>
     </Routes>
     </BrowserRouter>

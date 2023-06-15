@@ -7,7 +7,7 @@ import NavigationBar from "../../ui/NavigationBar"
 import { Container, Form, Alert, FormGroup, Row, Col, Button, Table, Modal} from "react-bootstrap"
 
 function Event() {
-    const {user}  = useContext(AuthContext)
+    const {user} = useContext(AuthContext)
     const [error, setError] = useState('')
     const [updateError, setUpdateError] = useState('')
     const [event, setEvent] = useState({

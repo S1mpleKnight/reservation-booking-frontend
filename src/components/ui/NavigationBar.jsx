@@ -14,11 +14,11 @@ function NavigationBar() {
             <Container>
                 <Navbar.Brand as={Link} to="/">BOOKING</Navbar.Brand>
                 <Nav className="justify-content-end">
-                    <Nav.Link href="#home">Offers</Nav.Link>
                     {
                         !!user 
                         ? 
                         <>
+                            <Nav.Link as={Link} to="/offers">Offers</Nav.Link>
                             <Nav.Link as={Link} to="/events">Events</Nav.Link>
                             <Nav.Link as={Link} to="/establishments">Establishments</Nav.Link>
                             <Nav.Link as={Link} to="/countries">Countries</Nav.Link>
