@@ -80,7 +80,7 @@ function Offer() {
                 <div className="d-flex justify-content-center my-3">
                     { offers.length ? (
                             offers.map(of => (
-                                <ReservationOffer key={of.id} contacts={contacts} events={events} establishments={establishments} data={of}/>
+                                <ReservationOffer key={of.id} contacts={contacts} events={events} establishments={establishments} data={of} categories={categories}/>
                             ))
 
                         ) : (

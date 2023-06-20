@@ -28,11 +28,14 @@ function ReservationOffer(props) {
         imageUrl : '',
         establishmentUrl : '',
         eventUrl : '',
+        categories : [],
+        categoryIds : []
     })
     const {user} = useContext(AuthContext)
     const [contacts] = useState(props.contacts)
     const [events] = useState(props.events)
     const [establishments] = useState(props.establishments) 
+    const [categories] = useState(props.categories)
     const [showModal, setShowModal] = useState(false)
 
     const handleCloseModal = () => {
@@ -59,7 +62,9 @@ function ReservationOffer(props) {
             offerStatus: 'NOT_OPEN',
             imageUrl : '',
             establishmentUrl : '',
-            eventUrl : ''
+            eventUrl : '',    
+            categories : [],
+            categoryIds : []
         })
     }
 
@@ -118,6 +123,23 @@ function ReservationOffer(props) {
             const resultContact = contacts.find(u => u.username === contactName)
             setOfferUpdate(prev => ({
                 ...prev, contact : resultContact, contactId : resultContact.id
+            }))
+        }
+    }
+
+    const changeCategories = (e) => {
+        setOfferUpdate(prev => ({
+            ...prev, categories : [].slice.call(e.target.selectedOptions).map(item => item.value)
+        }))
+        const selectedCategories = [].slice.call(e.target.selectedOptions).map(item => item.value)
+        if (categories.length > 0) {
+            const chosenCategories = []
+            for (var i = 0; i < selectedCategories.length; i++) {
+                const chosenCategory = categories.find(c => c.name === selectedCategories[i])
+                chosenCategories.push(chosenCategory) 
+            }
+            setOfferUpdate(prev => ({
+                ...prev, categories : chosenCategories, categoryIds : chosenCategories.map(c => c.id)
             }))
         }
     }
@@ -404,6 +426,26 @@ function ReservationOffer(props) {
                                 </Col>
                             </Row>
                         }
+                        <Row>
+                            <Col>
+                                <FormGroup className="categoryIds">
+                                    <div className="d-flex align-items-center justify-content-center">
+                                        <Form.Label>Select categories</Form.Label>
+                                    </div>
+                                    <div className="d-flex align-items-center justify-content-center">
+                                        <Form.Control 
+                                            as="select"
+                                            multiple
+                                            onChange={e => changeCategories(e)}
+                                            value={offerUpdate.categories.map(c => c.name)}>
+                                                {categories.map(category => (
+                                                    <option key={category.id}>{category.name}</option>
+                                                ))}
+                                        </Form.Control>
+                                    </div>
+                                </FormGroup>
+                            </Col>
+                        </Row>
                         <Row>
                             <Col>
                                 <FormGroup className="userId">
