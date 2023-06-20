@@ -12,7 +12,7 @@ function NavigationBar() {
     <>
         <Navbar bg="light" expand="lg">
             <Container>
-                <Navbar.Brand as={Link} to="/">BOOKING</Navbar.Brand>
+                <Navbar.Brand as={Link} to="/offers">BOOKING</Navbar.Brand>
                 <Nav className="justify-content-end">
                     {
                         !!user 
