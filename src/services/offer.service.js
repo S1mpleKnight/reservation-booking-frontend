@@ -28,7 +28,7 @@ export const OfferService = {
 
     async getById(id, token) {
         const byIdUrl = url + id
-        const resposne = await axios.get(url, {
+        const resposne = await axios.get(byIdUrl, {
             headers : {
                 Authorization : token 
             }

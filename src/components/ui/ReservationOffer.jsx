@@ -2,6 +2,7 @@ import { useContext, useState } from "react"
 import { AuthContext } from "../../providers/AuthProvider"
 import { Button, Card, Col, FormGroup, Modal, Row, Alert, Form} from "react-bootstrap"
 import { OfferService } from "../../services/offer.service"
+import { Link } from "react-router-dom"
 
 function ReservationOffer(props) {
     const [updateError, setUpdateError] = useState('')
@@ -29,7 +30,12 @@ function ReservationOffer(props) {
         establishmentUrl : '',
         eventUrl : '',
         categories : [],
-        categoryIds : []
+        categoryIds : [],
+        additionalOfferInfo : {
+            imageUrl: '',
+            eventUrl : '',
+            establishmentUrl : ''
+        }
     })
     const {user} = useContext(AuthContext)
     const [contacts] = useState(props.contacts)
@@ -64,7 +70,12 @@ function ReservationOffer(props) {
             establishmentUrl : '',
             eventUrl : '',    
             categories : [],
-            categoryIds : []
+            categoryIds : [],
+            additionalOfferInfo : {
+                imageUrl: '',
+                eventUrl : '',
+                establishmentUrl : ''
+            }
         })
     }
 
@@ -79,14 +90,6 @@ function ReservationOffer(props) {
                 ...prev, reservationTime : ''
             }))
         }
-        setOfferUpdate(prev => ({
-            ...prev, 'additionalOfferInfo' : {
-                imageUrl : offerUpdate.imageUrl,
-                eventUrl : offerUpdate.eventUrl,
-                establishmentUrl : offerUpdate.establishmentUrl
-            } 
-        }))
-        console.log(offerUpdate)
         await OfferService.update(offer.id, offerUpdate, user.token)
             .then(function(response) {
                 setOffer(response.data)
@@ -378,10 +381,14 @@ function ReservationOffer(props) {
                                             <Form.Control 
                                                 type="text" 
                                                 placeholder="Enter image url" 
-                                                onChange={e => setOfferUpdate(prev => ({
-                                                    ...prev, imageUrl : e.target.value
-                                                }))}
-                                                value={offerUpdate.imageUrl}/>
+                                                onChange={e => setOfferUpdate({
+                                                    ...offerUpdate,
+                                                    additionalOfferInfo: {
+                                                        ...offerUpdate.additionalOfferInfo,
+                                                        imageUrl : e.target.value 
+                                                    } 
+                                                })}
+                                                value={offerUpdate.additionalOfferInfo.imageUrl}/>
                                         </div>
                                     </FormGroup>
                                 </Col>
@@ -398,10 +405,14 @@ function ReservationOffer(props) {
                                             <Form.Control 
                                                 type="text" 
                                                 placeholder="Enter establishment url" 
-                                                onChange={e => setOfferUpdate(prev => ({
-                                                    ...prev, establishmentUrl : e.target.value
+                                                onChange={e => setOfferUpdate(({
+                                                    ...offerUpdate, 
+                                                    additionalOfferInfo: {
+                                                        ...offerUpdate.additionalOfferInfo,
+                                                        establishmentUrl : e.target.value 
+                                                    } 
                                                 }))}
-                                                value={offerUpdate.establishmentUrl}/>
+                                                value={offerUpdate.additionalOfferInfo.establishmentUrl}/>
                                         </div>
                                     </FormGroup>
                                 </Col>
@@ -414,10 +425,14 @@ function ReservationOffer(props) {
                                             <Form.Control 
                                                 type="text" 
                                                 placeholder="Enter event url" 
-                                                onChange={e => setOfferUpdate(prev => ({
-                                                    ...prev, eventUrl : e.target.value
+                                                onChange={e => setOfferUpdate(({
+                                                    ...offerUpdate, 
+                                                    additionalOfferInfo: {
+                                                        ...offerUpdate.additionalOfferInfo,
+                                                        eventUrl : e.target.value 
+                                                    } 
                                                 }))}
-                                                value={offerUpdate.eventUrl}/>
+                                                value={offerUpdate.additionalOfferInfo.eventUrl}/>
                                         </div>
                                     </FormGroup>
                                 </Col>
@@ -578,9 +593,18 @@ function ReservationOffer(props) {
                         }
                     </Card.Title>
                 </Card.Body>
-                <Button onClick={() => handleOpenModal()}>
-                    Update
-                </Button>
+                <Row>
+                    <Col className="d-flex justify-content-center my-3 mx-1">
+                        <Button onClick={() => handleOpenModal()}>
+                            Update
+                        </Button>
+                    </Col>
+                    <Col className="d-flex justify-content-center my-3 mx-1">
+                        <Button as={Link} to={"offers/" + offer.id}>
+                            More info
+                        </Button>
+                    </Col>
+                </Row>
             </Card>
         </>
     )

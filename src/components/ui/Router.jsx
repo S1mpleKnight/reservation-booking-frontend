@@ -10,6 +10,7 @@ import Establishment from "../screens/establishment/Establishment"
 import Event from "../screens/event/Event"
 import { Navigate } from "react-router-dom"
 import Offer from "../screens/offer/Offer"
+import ExactOffer from "../screens/offer/ExactOffer"
 
 const Router = () => {
     return <BrowserRouter>
@@ -26,6 +27,7 @@ const Router = () => {
         <Route element={<Establishment/>} path="/establishments"/>
         <Route element={<Event/>} path="/events"/>
         <Route element={<Offer/>} path="/offers"/>
+        <Route element={<ExactOffer/>} path="/offers/:id"/>
         <Route element={<Navigate to="/" replace/>} path="*"/>
     </Routes>
     </BrowserRouter>
