@@ -16,6 +16,16 @@ export const OfferService = {
         return response
     },
 
+    async getAllFiltered(filter, token) {
+        const response = await axios.get(url, {
+            headers : {
+                Authorization : token 
+            }, 
+            params : filter
+        })
+        return response
+    },
+
     async create(data, token) {
         const response = await axios.post(url, data, {
             headers : {

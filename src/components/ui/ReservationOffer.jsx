@@ -128,9 +128,6 @@ function ReservationOffer(props) {
     }
 
     const changeCategories = (e) => {
-        setOfferUpdate(prev => ({
-            ...prev, categories : [].slice.call(e.target.selectedOptions).map(item => item.value)
-        }))
         const selectedCategories = [].slice.call(e.target.selectedOptions).map(item => item.value)
         if (categories.length > 0) {
             const chosenCategories = []
@@ -524,13 +521,13 @@ function ReservationOffer(props) {
                     </Form>
                 </Modal.Body>
             </Modal>
-            <Card>
+            <Card className="mx-1">
                 <Card.Header>{offer.name}</Card.Header>
                 <Row>
                     <Col>
                         { offer.hasAdditionalInfo && offer.additionalOfferInfo && offer.additionalOfferInfo.imageUrl &&
                         <Card.Body>
-                            <Card.Img variant="top" src={offer.additionalOfferInfo.imageUrl}/>
+                            <Card.Img variant="top" src={offer.additionalOfferInfo.imageUrl} width={180} height={180}/>
                         </Card.Body>
                         }
                     </Col>
@@ -539,8 +536,8 @@ function ReservationOffer(props) {
                     <Col>
                         { offer.hasEvent &&
                         <Card.Body>
-                            <Card.Title>{offer.event.title}</Card.Title>
-                            <Card.Text>{offer.event.description}</Card.Text>
+                            <Card.Title>Event name: {offer.event.title}</Card.Title>
+                            <Card.Text>Event description: {offer.event.description}</Card.Text>
                         </Card.Body>
                         }
                     </Col>
