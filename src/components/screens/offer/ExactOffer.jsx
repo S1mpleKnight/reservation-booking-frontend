@@ -1,10 +1,14 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { OfferService } from "../../../services/offer.service";
 import NavigationBar from "../../ui/NavigationBar";
-import { Container, Alert, Col, Row, Image} from "react-bootstrap";
+import { Container, Alert, Col, Row, Image, FormGroup, Button, Form, Table} from "react-bootstrap";
 import { useParams } from "react-router-dom";
+import { UnitedPartsService } from "../../../services/united.parts.service";
+import { AuthContext } from "../../../providers/AuthProvider";
+import { UnitsService } from "../../../services/unit.service";
 
 function ExactOffer() {
+    const {user} = useContext(AuthContext)
     const [offer, setOffer] = useState({
         contact : {
             firstname : '',
@@ -15,10 +19,14 @@ function ExactOffer() {
     })
     const [error, setError] = useState('')
     const {id} = useParams();
+    const [unitedPart, setUnitedPart] = useState('')
+    const [unitedParts, setUnitedParts] = useState([])
+    const [unit, setUnit] = useState('')
+    const [units, setUnits] = useState([])
 
     useEffect(() => {
         const fetchOffer = async () => {
-            await OfferService.getById(id)
+            await OfferService.getById(id, user.token)
                 .then(function(response) {
                     setOffer(response.data)
                 })
@@ -26,8 +34,28 @@ function ExactOffer() {
                     setError(errorMessage)
                 })
         }
+        const fetchUnitedParts = async () => {
+            await UnitedPartsService.getAll(user.token, id)
+                .then(function(response) {
+                    setUnitedParts(response.data.content)
+                })
+                .catch(function(errorMessage) {
+                    setError(errorMessage)
+                })
+        }
+        const fetchUnits = async () => {
+            await UnitsService.getAll(user.token, id)
+                .then(function(response) {
+                    setUnits(response.data)
+                })
+                .catch(function(errorMessage) {
+                    setError(errorMessage)
+                })
+        }
 
         fetchOffer()
+        fetchUnitedParts()
+        fetchUnits()
     }, [])
 
         
@@ -40,11 +68,39 @@ function ExactOffer() {
         return apartment === '' ? ('None') : apartment
     }
 
+    const createUnitedPart = async (e) => {
+        e.preventDefault()
+        setError('')
+        await UnitedPartsService.create(unitedPart, user.token, id)
+            .then(function(response) {
+                setUnitedParts([
+                    ...unitedParts, response.data
+                ])
+                setUnitedPart('')
+            })
+            .catch(function(errorMessage) {
+                setError(errorMessage)
+            })
+    }
+
+    const deleteUnitedPart = async (e) => {
+        setError('')
+        await UnitedPartsService.delete(id, user.token, e.id)
+            .then(function(response) {
+                setUnitedParts(
+                    unitedParts.filter(up => up.id !== e.id)
+                )
+            })
+            .catch(function(errorMessage) {
+                setError(errorMessage)
+            })
+    }
+
     return (
         <>
             <NavigationBar/>
             <Container>
-                {error && <Alert variant='danger'>
+                {error && <Alert variant='danger' className="mt-2">
                     {error.response.data.message}
                 </Alert>}
                 <h2 className="d-flex align-content-center">{offer.name}</h2>
@@ -112,53 +168,116 @@ function ExactOffer() {
                     </div>
                 }
                 <div className="border border-dark px-3 py-2 mt-3">  
-                        <Row>
-                            <Col>
-                                <p>Contact: {offer.contact.firstname + " " + offer.contact.lastname}</p>
-                            </Col>
-                            <Col>
-                                <p>Email: {offer.contact.email}</p>
-                            </Col>
-                        </Row> 
-                        <Row>
+                    <Row>
+                        <Col>
+                            <p>Contact: {offer.contact.firstname + " " + offer.contact.lastname}</p>
+                        </Col>
+                        <Col>
+                            <p>Email: {offer.contact.email}</p>
+                        </Col>
+                    </Row> 
+                    <Row>
+                        <Col>
+                            <div>
+                                <p>Reservation offer date: {offer.reservationDate}</p>        
+                            </div>
+                        </Col>
+                        { offer.hasTime && 
                             <Col>
                                 <div>
-                                    <p>Reservation offer date: {offer.reservationDate}</p>        
+                                    <p>Reservation time : {offer.reservationTime}</p>
                                 </div>
                             </Col>
-                            { offer.hasTime && 
-                                <Col>
-                                    <div>
-                                        <p>Reservation time : {offer.reservationTime}</p>
-                                    </div>
-                                </Col>
-                            }
-                        </Row>  
-                        { offer.categories.length > 0 && 
-                            <Row>
-                                <Col>
-                                    <p>Categories: 
-                                        {offer.categories.map(c => (
-                                            <span key={c.id}>{" " + c.name}</span>
-                                        ))}
-                                    </p>
-                                </Col>
-                            </Row>
                         }
+                    </Row>  
+                    { offer.categories.length > 0 && 
                         <Row>
                             <Col>
-                                <p>Reservation offer type: {offer.reservationType}</p>
-                            </Col>
-                            { offer.reservationType === 'ORDER' &&
-                                <Col>
-                                    <p>Order type: {offer.orderType}</p>
-                                </Col>
-                            }
-                            <Col>
-                                <p>Progress status: {offer.offerStatus}</p>
+                                <p>Categories: 
+                                    {offer.categories.map(c => (
+                                        <span key={c.id}>{" " + c.name}</span>
+                                    ))}
+                                </p>
                             </Col>
                         </Row>
+                    }
+                    <Row>
+                        <Col>
+                            <p>Reservation offer type: {offer.reservationType}</p>
+                        </Col>
+                        { offer.reservationType === 'ORDER' &&
+                            <Col>
+                                <p>Order type: {offer.orderType}</p>
+                            </Col>
+                        }
+                        <Col>
+                            <p>Progress status: {offer.offerStatus}</p>
+                        </Col>
+                    </Row>
+                </div>
+                <div className="border border-dark px-3 py-2 mt-3">   
+                    <h5>United parts</h5>
+                    <Form>
+                        <Row>
+                            <Col xs={10}>
+                                <FormGroup>
+                                    <Form.Control 
+                                        type="text" 
+                                        placeholder="Enter united part name" 
+                                        value={unitedPart.name} 
+                                        onChange={e => setUnitedPart({
+                                            offerId : id, name : e.target.value
+                                        })}/>
+                                </FormGroup>
+                            </Col>
+                            <Col>      
+                                <Button onClick={e => createUnitedPart(e)}>
+                                    Create
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Form>
+                    <div className="mt-2">
+                        {unitedParts.length ? (
+                            <Table striped hover>
+                                <tbody>
+                                    <tr>
+                                        <th>United part name</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    {unitedParts.map(up => (
+                                        <tr key={up.id}>
+                                            <td>{up.name}</td>
+                                            <td className="d-flex justify-content-start">
+                                                <div>
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                            width="16"
+                                                            height="16"
+                                                            fill="currentColor"
+                                                            className="bi bi-trash mx-2"
+                                                            viewBox="0 0 16 16"
+                                                            onClick={() => deleteUnitedPart(up)}
+                                                    >
+                                                    <path
+                                                        d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                                    <path fillRule="evenodd"
+                                                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                                    </svg>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))} 
+                                </tbody>
+                            </Table>
+                        ) : (
+                            <div className="d-flex justify-content-center">
+                                <Alert variant='light' className="mt-2">
+                                    There are no united parts
+                                </Alert>
+                            </div>
+                        )}
                     </div>
+                </div>
             </Container>
         </>
     )
