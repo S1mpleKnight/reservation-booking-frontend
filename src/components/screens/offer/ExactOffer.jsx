@@ -6,6 +6,7 @@ import { useParams } from "react-router-dom";
 import { UnitedPartsService } from "../../../services/united.parts.service";
 import { AuthContext } from "../../../providers/AuthProvider";
 import { UnitsService } from "../../../services/unit.service";
+import { UnitTypeService } from "../../../services/unit.type.service";
 
 function ExactOffer() {
     const {user} = useContext(AuthContext)
@@ -21,6 +22,8 @@ function ExactOffer() {
     const {id} = useParams();
     const [unitedPart, setUnitedPart] = useState('')
     const [unitedParts, setUnitedParts] = useState([])
+    const [unitType, setUnitType] = useState('')
+    const [unitTypes, setUnitTypes] = useState([])
     const [unit, setUnit] = useState('')
     const [units, setUnits] = useState([])
 
@@ -46,16 +49,26 @@ function ExactOffer() {
         const fetchUnits = async () => {
             await UnitsService.getAll(user.token, id)
                 .then(function(response) {
-                    setUnits(response.data)
+                    setUnits(response.data.content)
                 })
                 .catch(function(errorMessage) {
                     setError(errorMessage)
                 })
         }
-
+        const fetchUnitTypes = async () => {
+            await UnitTypeService.getAll(user.token, id)
+                .then(function(response) {
+                    setUnitTypes(response.data.content)
+                })
+                .catch(function(errorMessage) {
+                    setError(errorMessage)
+                })
+        }
+        
         fetchOffer()
         fetchUnitedParts()
         fetchUnits()
+        fetchUnitTypes()
     }, [])
 
         
@@ -83,12 +96,40 @@ function ExactOffer() {
             })
     }
 
+    const createUnitType = async (e) => {
+        e.preventDefault()
+        setError('')
+        await UnitTypeService.create(unitType, user.token, id)
+            .then(function(response) {
+                setUnitTypes([
+                    ...unitTypes, response.data
+                ])
+                setUnitType('')
+            })
+            .catch(function(errorMessage) {
+                setError(errorMessage)
+            })
+    }
+
     const deleteUnitedPart = async (e) => {
         setError('')
         await UnitedPartsService.delete(id, user.token, e.id)
             .then(function(response) {
                 setUnitedParts(
                     unitedParts.filter(up => up.id !== e.id)
+                )
+            })
+            .catch(function(errorMessage) {
+                setError(errorMessage)
+            })
+    }
+
+    const deleteUnitType = async (e) => {
+        setError('')
+        await UnitTypeService.delete(id, user.token, e.id)
+            .then(function(response) {
+                setUnitTypes(
+                    unitTypes.filter(ut => ut.id !== e.id)
                 )
             })
             .catch(function(errorMessage) {
@@ -214,6 +255,69 @@ function ExactOffer() {
                             <p>Progress status: {offer.offerStatus}</p>
                         </Col>
                     </Row>
+                </div>
+                <div className="border border-dark px-3 py-2 mt-3">   
+                    <h5>Unit types</h5>
+                    <Form>
+                        <Row>
+                            <Col xs={10}>
+                                <FormGroup>
+                                    <Form.Control 
+                                        type="text" 
+                                        placeholder="Enter unit type name" 
+                                        value={unitType.name} 
+                                        onChange={e => setUnitType({
+                                            offerId : id, name : e.target.value
+                                        })}/>
+                                </FormGroup>
+                            </Col>
+                            <Col>      
+                                <Button onClick={e => createUnitType(e)}>
+                                    Create
+                                </Button>
+                            </Col>
+                        </Row>
+                    </Form>
+                    <div className="mt-2">
+                        {unitTypes.length ? (
+                            <Table striped hover>
+                                <tbody>
+                                    <tr>
+                                        <th>Unit type name</th>
+                                        <th>Delete</th>
+                                    </tr>
+                                    {unitTypes.map(ut => (
+                                        <tr key={ut.id}>
+                                            <td>{ut.name}</td>
+                                            <td className="d-flex justify-content-start">
+                                                <div>
+                                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                                        width="16"
+                                                        height="16"
+                                                        fill="currentColor"
+                                                        className="bi bi-trash mx-2"
+                                                        viewBox="0 0 16 16"
+                                                        onClick={() => deleteUnitType(ut)}
+                                                    >
+                                                        <path
+                                                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                                                        <path fillRule="evenodd"
+                                                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                                                    </svg>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))} 
+                                </tbody>
+                            </Table>
+                        ) : (
+                            <div className="d-flex justify-content-center">
+                                <Alert variant='light' className="mt-2">
+                                    There are no unit types
+                                </Alert>
+                            </div>
+                        )}
+                    </div>
                 </div>
                 <div className="border border-dark px-3 py-2 mt-3">   
                     <h5>United parts</h5>
