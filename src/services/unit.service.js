@@ -15,6 +15,16 @@ export const UnitsService = {
         })
         return response
     },
+    
+    async getById(token, id, uuid) {
+        const url = offerPart + id + "/" + units + uuid
+        const response = await axios.get(url, {
+            headers : {
+                Authorization : token 
+            }
+        })
+        return response
+    },
 
     async create(data, token, id) {
         const url = offerPart + id + "/" + units

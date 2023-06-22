@@ -1,12 +1,14 @@
 import { useContext, useEffect, useState } from "react";
 import { OfferService } from "../../../services/offer.service";
 import NavigationBar from "../../ui/NavigationBar";
-import { Container, Alert, Col, Row, Image, FormGroup, Button, Form, Table} from "react-bootstrap";
+import { Container, Alert, Col, Row, Image, FormGroup, Button, Form, Table, Modal} from "react-bootstrap";
 import { useParams } from "react-router-dom";
 import { UnitedPartsService } from "../../../services/united.parts.service";
 import { AuthContext } from "../../../providers/AuthProvider";
 import { UnitsService } from "../../../services/unit.service";
 import { UnitTypeService } from "../../../services/unit.type.service";
+import { ReservationService } from "../../../services/reservation.service";
+import { UserService } from "../../../services/user.service";
 
 function ExactOffer() {
     const {user} = useContext(AuthContext)
@@ -26,6 +28,14 @@ function ExactOffer() {
     const [unitTypes, setUnitTypes] = useState([])
     const [unit, setUnit] = useState('')
     const [units, setUnits] = useState([])
+    const [reservation, setReservation] = useState({
+        user : {
+            username : ''
+        }
+    })
+    const [showModal, setShowModal] = useState(false)
+    const [modalError, setModalError] = useState('')
+    const [users, setUsers] = useState([])
 
     useEffect(() => {
         const fetchOffer = async () => {
@@ -64,7 +74,17 @@ function ExactOffer() {
                     setError(errorMessage)
                 })
         }
+        const fetchUsers = async () => {
+            await UserService.getAll(user.token, id)
+                .then(function(response) {
+                    setUsers(response.data.content)
+                })
+                .catch(function(errorMessage) {
+                    setError(errorMessage)
+                })
+        }
         
+        fetchUsers()
         fetchOffer()
         fetchUnitedParts()
         fetchUnits()
@@ -157,6 +177,16 @@ function ExactOffer() {
         }
     }
 
+    const changeUser = (e) => {
+        const userName = e.target.value
+        if (users.length > 0) {
+            const resultUser = users.find(u => u.username === userName)
+            setReservation(prev => ({
+                ...prev, user : resultUser, userId : resultUser.id
+            }))
+        }
+    }
+
     const changeHasUnitedPart = (e) => {
         if (unitedParts.length) {
             setUnit(prev => ({
@@ -230,9 +260,79 @@ function ExactOffer() {
             })
     }
 
+    const handleOpenModal = (u) => {
+        setError('')
+        setReservation(prev => ({
+            ...prev, unitIds : [u.id], status : "NOT_AVAILABLE"
+        }))
+        setShowModal(true)
+    }
+
+    const handleCloseModal = () => {
+        setModalError('')
+        setReservation({
+            user : {
+                username : ''
+            }
+        })
+        setShowModal(false)
+    }
+
+    const createReservation = async () => {
+        setModalError('')
+        await ReservationService.create(reservation, user.token)
+            .then(function(response) {
+                const unitId = response.data.unitIds[0]
+                UnitsService.getById(user.token, id, unitId)
+                    .then(function(res) {
+                        setUnits(
+                            units.filter(u => u.id !== res.id), res.data
+                        )        
+                    })
+                    .catch(function(err) {
+                        setError(err)
+                    })
+                    handleCloseModal()
+            })
+            .catch(function(errorMessage) {
+                setModalError(errorMessage)
+            })
+    }
+
     return (
         <>
             <NavigationBar/>
+            <Modal show={showModal} onHide={handleCloseModal}>
+                <Modal.Header closeButton>
+                    <Modal.Title>Reservation</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                    {modalError && <Alert variant='danger'>
+                        {modalError.response.data.message}
+                    </Alert>}
+                    <Form>
+                        <FormGroup controlId="name">
+                            <div className="d-flex align-items-center justify-content-center">
+                                <Form.Label>Select user</Form.Label>
+                            </div>
+                            <div className="d-flex align-items-center justify-content-center">
+                                <Form.Select
+                                    onChange={e => changeUser(e)}
+                                    value={reservation.user.username}>
+                                    {users.map(user => (
+                                        <option key={user.id}>{user.username}</option>
+                                    ))}
+                                </Form.Select>
+                            </div>
+                        </FormGroup>
+                    </Form>
+                </Modal.Body>
+                <Modal.Footer>
+                    <Button onClick={() => createReservation()} className="mt-3">
+                        Reserve
+                    </Button>
+                </Modal.Footer>
+            </Modal>
             <Container>
                 {error && <Alert variant='danger' className="mt-2">
                     {error.response.data.message}
@@ -660,6 +760,7 @@ function ExactOffer() {
                                         <th>Order number</th>
                                         <th>Type</th>
                                         <th>Delete</th>
+                                        <th>Reservation</th>
                                     </tr>
                                     {units.map(u => (
                                         <tr key={u.id}>
@@ -684,6 +785,24 @@ function ExactOffer() {
                                                                 d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
                                                     </svg>
                                                 </div>
+                                            </td>
+                                            <td className="align-items-center justify-content-center">
+                                                {u.reservation 
+                                                    ? "Reserved" 
+                                                    : (
+                                                        <div>
+                                                            <svg xmlns="http://www.w3.org/2000/svg"
+                                                                width="16"
+                                                                height="16"
+                                                                fill="currentColor"
+                                                                className="bi bi-trash mx-2"
+                                                                viewBox="0 0 16 16"
+                                                                onClick={() => handleOpenModal(u)}
+                                                            >
+                                                                <path d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"/>
+                                                            </svg>
+                                                        </div>
+                                                    )}
                                             </td>
                                         </tr>
                                     ))} 
