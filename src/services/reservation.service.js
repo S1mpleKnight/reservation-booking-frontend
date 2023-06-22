@@ -16,6 +16,16 @@ export const ReservationService = {
         return response
     },
 
+    async getPersonal(token) {
+        const personal = url + "personal/"
+        const response = await axios.get(personal, {
+            headers : {
+                Authorization : token 
+            }
+        })
+        return response
+    },
+
     async create(data, token) {
         const response = await axios.post(url, data, {
             headers : {

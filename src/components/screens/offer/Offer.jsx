@@ -1010,7 +1010,7 @@ function Offer() {
                         ) : (
                             <div className="d-flex justify-content-center">
                                 <Alert variant='light'>
-                                    There are no countries
+                                    There are no offers
                                 </Alert>
                             </div>
                         ) 
