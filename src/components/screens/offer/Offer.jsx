@@ -63,7 +63,12 @@ function Offer() {
         establishmentUrl : '',
         eventUrl : '',
         categories : [],
-        categoryIds : []
+        categoryIds : [],
+        additionalOfferInfo : {
+            imageUrl: '',
+            eventUrl : '',
+            establishmentUrl : ''
+        }
     })
 
     useEffect(() => {
@@ -255,13 +260,6 @@ function Offer() {
                 ...prev, reservationTime : ''
             }))
         }
-        setOffer(prev => ({
-            ...prev, 'additionalOfferInfo' : {
-                imageUrl : offer.imageUrl,
-                eventUrl : offer.eventUrl,
-                establishmentUrl : offer.establishmentUrl
-            } 
-        }))
         await OfferService.create(offer, user.token)
             .then(function(response) {
                 setOffers(prev => ([
@@ -862,10 +860,14 @@ function Offer() {
                                                     <Form.Control 
                                                         type="text" 
                                                         placeholder="Enter image url" 
-                                                        onChange={e => setOffer(prev => ({
-                                                            ...prev, imageUrl : e.target.value
-                                                        }))}
-                                                        value={offer.imageUrl}/>
+                                                        onChange={e => setOffer({
+                                                            ...offer,
+                                                            additionalOfferInfo: {
+                                                                ...offer.additionalOfferInfo,
+                                                                imageUrl : e.target.value 
+                                                            } 
+                                                        })}
+                                                        value={offer.additionalOfferInfo.imageUrl}/>
                                                 </div>
                                             </FormGroup>
                                         </Col>
@@ -882,10 +884,14 @@ function Offer() {
                                                     <Form.Control 
                                                         type="text" 
                                                         placeholder="Enter establishment url" 
-                                                        onChange={e => setOffer(prev => ({
-                                                            ...prev, establishmentUrl : e.target.value
+                                                        onChange={e => setOffer(({
+                                                            ...offer, 
+                                                            additionalOfferInfo: {
+                                                                ...offer.additionalOfferInfo,
+                                                                establishmentUrl : e.target.value 
+                                                            } 
                                                         }))}
-                                                        value={offer.establishmentUrl}/>
+                                                        value={offer.additionalOfferInfo.establishmentUrl}/>
                                                 </div>
                                             </FormGroup>
                                         </Col>
@@ -898,10 +904,14 @@ function Offer() {
                                                     <Form.Control 
                                                         type="text" 
                                                         placeholder="Enter event url" 
-                                                        onChange={e => setOffer(prev => ({
-                                                            ...prev, eventUrl : e.target.value
+                                                        onChange={e => setOffer(({
+                                                            ...offer, 
+                                                            additionalOfferInfo: {
+                                                                ...offer.additionalOfferInfo,
+                                                                eventUrl : e.target.value 
+                                                            } 
                                                         }))}
-                                                        value={offer.eventUrl}/>
+                                                        value={offer.additionalOfferInfo.eventUrl}/>
                                                 </div>
                                             </FormGroup>
                                         </Col>
